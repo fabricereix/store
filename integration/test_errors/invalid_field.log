@@ -1,0 +1,2 @@
+Parsing Error at integration/test_errors/invalid_field.ini:1:1
+The package [packageA@0.1.0] must define at least a url or build field

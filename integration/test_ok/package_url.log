@@ -1,0 +1,16 @@
+Directory $PWD/target/packages/package-url@0.1.0 has been created
+File $PWD/target/installer/package-url@0.1.0/download/mypackage-0.1.0-x86_64-linux.tar.gz has been written
+Extracted file in $PWD/target/installer/package-url@0.1.0/extract/mypackage-0.1.0
+Copying files from $PWD/target/installer/package-url@0.1.0/extract/mypackage-0.1.0 to $PWD/target/packages/package-url@0.1.0
+Package package-url@0.1.0 successfully installed
+Directory $PWD/target/packages/yyy@0.1.0 has been created
+File $PWD/target/installer/yyy@0.1.0/download/yyy-0.1.0.tar.bz2 has been written
+Extracted file in $PWD/target/installer/yyy@0.1.0/extract/yyy-0.1.0
+Copying files from $PWD/target/installer/yyy@0.1.0/extract/yyy-0.1.0 to $PWD/target/packages/yyy@0.1.0
+Package yyy@0.1.0 successfully installed
+Directory $PWD/target/packages/sample@0.1.0 has been created
+File $PWD/target/installer/sample@0.1.0/download/sample-0.1.0.zip has been written
+Extracted file in $PWD/target/installer/sample@0.1.0/extract/sample
+Copying files from $PWD/target/installer/sample@0.1.0/extract/sample to $PWD/target/packages/sample@0.1.0
+Package sample@0.1.0 successfully installed
+

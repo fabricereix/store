@@ -1,0 +1,4 @@
+Directory $PWD/target/packages/package-url-copy@0.1.0 has been created
+File $PWD/target/installer/package-url-copy@0.1.0/download/hello has been written
+Script $PWD/target/installer/package-url-copy@0.1.0/build.sh executed with success
+Package package-url-copy@0.1.0 successfully installed

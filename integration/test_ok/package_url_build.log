@@ -1,0 +1,5 @@
+Directory $PWD/target/packages/package-url-build@0.1.0 has been created
+File $PWD/target/installer/package-url-build@0.1.0/download/xxx-0.1.0.tar.xz has been written
+Extracted file in $PWD/target/installer/package-url-build@0.1.0/extract/xxx-0.1.0
+Script $PWD/target/installer/package-url-build@0.1.0/build.sh executed with success
+Package package-url-build@0.1.0 successfully installed
