@@ -943,7 +943,7 @@ dependencies = [
 
 [[package]]
 name = "store"
-version = "0.1.0-snapshot"
+version = "0.1.0"
 dependencies = [
  "bzip2",
  "clap",
