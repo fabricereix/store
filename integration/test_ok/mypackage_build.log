@@ -1,3 +1,6 @@
+Directory $PWD/target/packages/packageA@1.0.0 has been created
+Script $PWD/target/installer/packageA@1.0.0/build.sh executed with success
+Package packageA@1.0.0 successfully installed
 Directory $PWD/target/packages/package-build@0.1.0 has been created
 Script $PWD/target/installer/package-build@0.1.0/build.sh executed with success
 Package package-build@0.1.0 successfully installed

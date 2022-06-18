@@ -53,3 +53,6 @@ echo "$cmd" | tee | sh
 
 cmd="store --db-file integration/test_ok/mypackage_build.ini --tmp-dir target/installer  --packages-dir target/packages info"
 echo "$cmd" | tee | sh
+
+cmd="store --db-file integration/test_ok/mypackage_build.ini --tmp-dir target/installer  --packages-dir target/packages dependencies"
+echo "$cmd" | tee | sh
