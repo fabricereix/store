@@ -78,6 +78,7 @@ impl Installer {
             download_file: None,
             current_dir: extract_dir.clone(),
         };
+
         Ok(Installer {
             download_dir,
             extract_dir,
@@ -107,7 +108,6 @@ impl Installer {
     }
 
     pub fn delete_directory(&self) -> String {
-        //eprintln!(">>>delete directory {}", self.package_dir.display());
         if self.package_dir.exists() {
             fs::remove_dir_all(self.package_dir.display().to_string()).expect("directory deleted");
             format!("Directory {} has been deleted", self.package_dir.display())
@@ -123,7 +123,6 @@ impl Installer {
                 let basename = Path::new(&url).file_name().unwrap().to_str().unwrap();
                 let download_file = self.download_dir.join(basename);
 
-                //eprintln!(">> Downloading {} to {}", url, download_file.display());
                 if download_file.exists() {
                     self.state.download_file = Some(download_file.clone());
                     return Ok(format!(
@@ -178,7 +177,6 @@ impl Installer {
                 };
                 match extract_command {
                     ExtractCommand::TarGz => {
-                        //eprintln!(">>> extracting {}", download_file.display());
                         let tar_gz = File::open(download_file.clone()).unwrap();
                         let tar = flate2::read::GzDecoder::new(tar_gz);
                         if verbose {
@@ -385,7 +383,6 @@ fn copy_dir_all(src: &Path, dst: &Path) -> io::Result<()> {
             let link = format!("{}/{}", dst.display(), link);
             std::os::unix::fs::symlink(original, link).unwrap();
         } else {
-            //eprintln!(">> copying file {}", entry.path().display());
             fs::copy(entry.path(), dst.join(entry.file_name()))?;
         }
     }

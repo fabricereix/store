@@ -16,6 +16,7 @@ pub struct Parser {
 pub struct PackageDef {
     pub name: String,
     pub version: String,
+    pub depends: Vec<String>,
     pub url: Option<String>,
     pub build: Option<String>,
 }
@@ -31,6 +32,7 @@ pub fn my_package_def() -> PackageDef {
     PackageDef {
         name: "mypackage".to_string(),
         version: "0.1.0".to_string(),
+        depends: vec![],
         url: Some("http://localhost:8000/mypackage-0.1.0-x86_64-linux.tar.gz".to_string()),
         build: None,
     }
@@ -95,6 +97,8 @@ impl Parser {
             self.match_literal("]")?;
             self.match_newline()?;
             self.skip_whitespace_or_comment();
+            let depends = self.depends_field()?;
+            self.skip_whitespace_or_comment();
             let url = self.url_field()?;
             self.skip_whitespace_or_comment();
             let build = self.build()?;
@@ -109,6 +113,7 @@ impl Parser {
             Ok(Some(PackageDef {
                 name,
                 version,
+                depends,
                 url,
                 build,
             }))
@@ -238,6 +243,19 @@ impl Parser {
         }
     }
 
+    pub fn depends_field(&mut self) -> Result<Vec<String>, ParseError> {
+        if self.match_literal("depends").is_err() {
+            Ok(vec![])
+        } else {
+            self.skip_space();
+            self.match_literal("=")?;
+            self.skip_space();
+            let depends = self.depends()?;
+            //self.match_newline()?;
+            Ok(depends)
+        }
+    }
+
     pub fn url_field(&mut self) -> Result<Option<String>, ParseError> {
         if self.match_literal("url").is_err() {
             Ok(None)
@@ -272,6 +290,25 @@ impl Parser {
             }
             Ok(Some(commands))
         }
+    }
+
+    pub fn depends(&mut self) -> Result<Vec<String>, ParseError> {
+        let mut value = "".to_string();
+        //let start = self.offset;
+        loop {
+            match self.read() {
+                None => break,
+                Some('\n') => break,
+                Some(c) => {
+                    value.push(c);
+                }
+            }
+        }
+        Ok(value
+            .trim()
+            .split(',')
+            .map(|p| p.trim().to_string())
+            .collect())
     }
 
     pub fn url(&mut self) -> Result<String, ParseError> {
@@ -401,6 +438,14 @@ url = http://localhost:8000/mypackage-0.1.0-x86_64-linux.tar.gz
         assert_eq!(parser.offset, 18);
     }
 
+    #[test]
+    pub fn test_depends() {
+        let mut parser = Parser::init("packageA, packageB@1.0.0");
+        assert_eq!(
+            parser.depends().unwrap(),
+            vec!["packageA".to_string(), "packageB@1.0.0".to_string()]
+        );
+    }
     //
     //     #[test]
     //     pub fn test_url_only() {

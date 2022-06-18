@@ -15,6 +15,7 @@ pub enum Command {
     ReInstall(Vec<String>),
     UnInstall(Vec<String>),
     Info,
+    Dependencies,
 }
 
 // clap (unfortunately) panics when options are not good
@@ -78,7 +79,8 @@ pub fn parse_options() -> Result<Options, String> {
                         .required(true),
                 ),
         )
-        .subcommand(clap::Command::new("info").about("List packages (installed and/or defined)"));
+        .subcommand(clap::Command::new("info").about("List packages (installed and/or defined)"))
+        .subcommand(clap::Command::new("dependencies").about("List dependencies tree"));
     let matches = command.clone().get_matches();
 
     let command = if let Some(("install", install_options)) = matches.subcommand() {
@@ -98,6 +100,8 @@ pub fn parse_options() -> Result<Options, String> {
         Command::UnInstall(package_queries.map(|s| s.to_string()).collect())
     } else if let Some(("info", _)) = matches.subcommand() {
         Command::Info
+    } else if let Some(("dependencies", _)) = matches.subcommand() {
+        Command::Dependencies
     } else {
         command.clone().print_help().unwrap();
         std::process::exit(2);
@@ -140,7 +144,8 @@ fn get_packages_dir(value: Option<&str>) -> Result<PathBuf, String> {
         Some(s) => s.to_string(),
     };
     let path = Path::new(&path);
-    Ok(path.to_path_buf())
+    let absolute_path = std::env::current_dir().unwrap().join(path);
+    Ok(absolute_path)
 }
 
 fn get_tmp_dir(value: Option<&str>) -> Result<PathBuf, String> {
@@ -152,5 +157,6 @@ fn get_tmp_dir(value: Option<&str>) -> Result<PathBuf, String> {
         Some(s) => s.to_string(),
     };
     let path = Path::new(&path);
-    Ok(path.to_path_buf())
+    let absolute_path = std::env::current_dir().unwrap().join(path);
+    Ok(absolute_path)
 }

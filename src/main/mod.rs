@@ -16,7 +16,7 @@ use std::fs;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
-use store::{Package, PackageDef};
+use store::{resolve_dependencies, Package, PackageDef};
 use utils::dir_size;
 
 fn main() {
@@ -28,10 +28,16 @@ fn main() {
         }
     };
 
+    if options.verbose {
+        eprintln!("{:#?}", options);
+    }
     let package_defs = parse_database_file(&options.db_file);
+    let dependencies = resolve_deps(&package_defs);
+
     match options.command.clone() {
         Command::Install(package_queries) => {
-            let install_packages = find_packages(package_defs, &package_queries);
+            let packages = find_packages(package_defs, &package_queries);
+            let install_packages = resolve_packages(&packages, &dependencies);
             for package_def in install_packages {
                 let package = package_def.compile(); // can not fail
                 install(
@@ -66,6 +72,7 @@ fn main() {
             ExitCode::Success.exit()
         }
         Command::Info => info(package_defs, &options.packages_dir),
+        Command::Dependencies => display_dependencies(&dependencies),
     }
 }
 
@@ -94,6 +101,16 @@ fn parse_database_file(db_file: &Path) -> Vec<PackageDef> {
     }
 }
 
+fn resolve_deps(package_defs: &Vec<PackageDef>) -> Vec<(String, PackageDef)> {
+    match resolve_dependencies(package_defs) {
+        Ok(deps) => deps,
+        Err(e) => {
+            eprintln!("{}", e);
+            ExitCode::ErrorDependencies.exit()
+        }
+    }
+}
+
 fn find_packages(package_defs: Vec<PackageDef>, package_queries: &Vec<String>) -> Vec<PackageDef> {
     let mut install_packages = vec![];
 
@@ -114,6 +131,26 @@ fn find_packages(package_defs: Vec<PackageDef>, package_queries: &Vec<String>) -
             for package in packages {
                 install_packages.push(package);
             }
+        }
+    }
+    install_packages
+}
+
+// add dependent packages to install
+fn resolve_packages(
+    package_defs: &Vec<PackageDef>,
+    dependencies: &Vec<(String, PackageDef)>,
+) -> Vec<PackageDef> {
+    let mut install_packages = vec![];
+
+    for package in package_defs {
+        for dep in dependencies {
+            if dep.0 == package.id() && !install_packages.contains(&dep.1) {
+                install_packages.push(dep.1.clone());
+            }
+        }
+        if !install_packages.contains(package) {
+            install_packages.push(package.clone());
         }
     }
     install_packages
@@ -145,6 +182,9 @@ fn delete_package(package: &Package, packages_dir: &Path, _verbose: bool) {
 }
 
 fn install(package: &Package, packages_dir: &Path, tmp_dir: &Path, verbose: bool) {
+    if verbose {
+        eprintln!("Installing {}", package.id);
+    }
     let mut package_installer = match store::Installer::init(packages_dir, tmp_dir, package) {
         Ok(inst) => inst,
         Err(e) => {
@@ -292,5 +332,12 @@ fn info(package_defs: Vec<PackageDef>, packages_dir: &Path) {
             size = size,
             obsolete = obsolete
         );
+    }
+}
+
+fn display_dependencies(dependencies: &Vec<(String, PackageDef)>) {
+    println!("Dependencies");
+    for dep in dependencies {
+        println!("{} -> {}", dep.0, dep.1.id())
     }
 }
