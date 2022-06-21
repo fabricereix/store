@@ -249,6 +249,9 @@ fn info(package_defs: Vec<PackageDef>, packages_dir: &Path) {
     };
     for dir_entry in dir_entries {
         let path = dir_entry.unwrap().path();
+        if !path.is_dir() {
+            continue;
+        }
         let package_name = path.clone();
         let package_name = package_name.file_name();
         let package_name = package_name.unwrap().to_str().unwrap().to_string();
