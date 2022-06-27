@@ -124,7 +124,7 @@ fn get_db_file(value: Option<&str>) -> Result<PathBuf, String> {
     let path = match value {
         None => match std::env::var("STORE_DB_FILE") {
             Ok(value) => value,
-            Err(_) => "config/db.ini".to_string(),
+            Err(_) => "db.ini".to_string(),
         },
         Some(s) => s.to_string(),
     };
